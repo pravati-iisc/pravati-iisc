@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "MMP Insight Configuration - Flexible Medium Schema",
+  "type": "object",
+  "additionalProperties": false,
+
+  "properties": {
+    "configurationType": {
+      "type": "string",
+      "enum": ["insight", "kpi"]
+    },
+
+    "configurationOwner": {
+      "type": "string",
+      "format": "email"
+    },
+
+    "dataOwner": {
+      "type": "string",
+      "format": "email"
+    },
+
+    "sourceSubject": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "insightSet": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "sourceIdentifier": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "dateAnchors": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "cutOff": { "type": "number" },
+        "notification": { "type": "number" }
+      },
+      "required": ["cutOff"],
+      "additionalProperties": true
+    },
+
+    "dataDestination": {
+      "type": "object",
+      "properties": {
+        "project": { "type": "string" },
+        "dataset": { "type": "string" }
+      },
+      "required": ["project", "dataset"],
+      "additionalProperties": true
+    },
+
+    "processingWindow": {
+      "type": "object",
+      "properties": {
+        "regular": {
+          "type": "object",
+          "properties": {
+            "dateAnchor": { "type": "string" },
+            "period": { "type": "string" },
+            "start": { "type": "integer" },
+            "end": { "type": "integer" }
+          },
+          "required": ["dateAnchor", "period", "start", "end"],
+          "additionalProperties": true
+        },
+        "reload": {
+          "type": "object",
+          "properties": {
+            "dateAnchor": { "type": "string" },
+            "period": { "type": "string" },
+            "start": { "type": "integer" },
+            "end": { "type": "integer" }
+          },
+          "required": ["dateAnchor", "period", "start", "end"],
+          "additionalProperties": true
+        }
+      },
+      "required": ["regular", "reload"],
+      "additionalProperties": true
+    },
+
+    "dataSource": {
+      "type": "object",
+      "properties": {
+        "table": { "type": "string" },
+        "alias": { "type": "string" },
+
+        "requiredColumns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "column": { "type": ["string", "null"] },
+              "alias": { "type": ["string", "null"] }
+            },
+            "required": ["alias"],
+            "additionalProperties": true
+          }
+        },
+
+        "joinTo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "table": { "type": "string" },
+              "alias": { "type": "string" },
+              "joinType": { "type": "string" },
+              "joinConditions": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "requiredColumns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "column": { "type": ["string", "null"] },
+                    "alias": { "type": ["string", "null"] }
+                  },
+                  "required": ["alias"],
+                  "additionalProperties": true
+                }
+              },
+              "whereConditions": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "required": ["table", "alias"],
+            "additionalProperties": true
+          }
+        },
+
+        "whereConditions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["table", "alias", "requiredColumns"],
+      "additionalProperties": true
+    },
+
+    "insights": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "wideColumnName": { "type": "string" },
+          "description": { "type": "string" },
+          "sourceTables": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "dataType": {
+            "type": "string",
+            "enum": ["NUMERIC", "STRING", "DATETIME"]
+          },
+          "logic": { "type": "string" }
+        },
+        "required": [
+          "name",
+          "wideColumnName",
+          "description",
+          "sourceTables",
+          "dataType",
+          "logic"
+        ],
+        "additionalProperties": true
+      }
+    },
+
+    "detail": {
+      "type": ["object", "null"],
+      "properties": {
+        "type": { "type": "string" },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "orderBy": { "type": "string" }
+            },
+            "required": ["name"],
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+
+  "required": [
+    "configurationType",
+    "configurationOwner",
+    "dataOwner",
+    "sourceSubject",
+    "insightSet",
+    "sourceIdentifier",
+    "dateAnchors",
+    "thresholds",
+    "dataDestination",
+    "processingWindow",
+    "dataSource",
+    "insights"
+  ]
+}
